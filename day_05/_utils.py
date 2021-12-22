@@ -1,4 +1,6 @@
 
+# not a great idea to model directly the grid: hash by position
+
 def read_lines(filename):
     lines = []
     with open(filename, 'r') as file:
