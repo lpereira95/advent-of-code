@@ -4,17 +4,18 @@ def load_data(filename):
 
     with open(filename, 'r') as file:
         lines = file.readlines()
-        drawn_numbers = [int(number.strip()) for number in lines[0].split(',')]
-        boards = []
-        board = []
-        for line in lines[2:]:
-            if line.strip() == '':
-                boards.append(board)
-                board = []
-                continue
 
-            board.append([int(number.strip()) for number in line.strip().split()])
-        boards.append(board)
+    drawn_numbers = [int(number.strip()) for number in lines[0].split(',')]
+    boards = []
+    board = []
+    for line in lines[2:]:
+        if line.strip() == '':
+            boards.append(board)
+            board = []
+            continue
+
+        board.append([int(number.strip()) for number in line.strip().split()])
+    boards.append(board)
 
     return drawn_numbers, boards
 
