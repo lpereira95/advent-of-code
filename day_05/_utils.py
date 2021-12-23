@@ -28,19 +28,6 @@ def get_grid_dimensions(grid):
     return 0, 0
 
 
-def _increase_grid_size(grid, new_grid_dims):
-
-    # extend columns
-    for row in grid:
-        row += [0 for _ in range(new_grid_dims[1] - len(row))]
-
-    # extend rows
-    for _ in range(new_grid_dims[0] - len(grid)):
-        grid.append([0 for _ in range(new_grid_dims[1])])
-
-    return grid
-
-
 def _get_covered_points_parallel(pt_left, pt_right, axis):
     pt_min = pt_left if pt_left[axis] < pt_right[axis] else pt_right
     pt_max = pt_right if pt_min is pt_left else pt_left
@@ -85,15 +72,6 @@ def get_covered_points(line, only_parallel=True):
 
 
 def update_grid(grid, covered_points):
-    if not covered_points:
-        return grid
-
-    # check dimensions
-    grid_size = get_grid_dimensions(grid)
-    larger_point = (max(pt[0] for pt in covered_points), max(pt[1] for pt in covered_points))
-    if grid_size[0] < (larger_point[1] + 1) or grid_size[1] < (larger_point[0] + 1):
-        new_dims = max(grid_size[0], larger_point[1] + 1), max(grid_size[1], larger_point[0] + 1)
-        grid = _increase_grid_size(grid, new_dims)
 
     # update grid
     for point in covered_points:
@@ -102,8 +80,34 @@ def update_grid(grid, covered_points):
     return grid
 
 
-def count_overlaps(lines, only_parallel=True):
+def get_grid_required_dims(lines):
+    max_x = 0
+    max_y = 0
+    for line in lines:
+        if line[0][0] > max_x or line[1][0] > max_x:
+            max_x = max([line[0][0], line[1][0]])
+
+        if line[0][1] > max_y or line[1][1] > max_y:
+            max_y = max([line[0][1], line[1][1]])
+
+    return max_x, max_y
+
+
+def initialize_grid(lines):
+    lim_x, lim_y = get_grid_required_dims(lines)
+
     grid = []
+
+    # extend columns
+    for _ in range(lim_y + 1):
+        grid.append([0 for _ in range(lim_x + 1)])
+
+    return grid
+
+
+def count_overlaps(lines, only_parallel=True):
+    grid = initialize_grid(lines)
+
     for line in lines:
         covered_points = get_covered_points(line, only_parallel)
         grid = update_grid(grid, covered_points)
