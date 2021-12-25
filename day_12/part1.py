@@ -30,12 +30,7 @@ class Node:
             if paths_:
                 paths.extend(paths_)
 
-        paths = self._update_paths(paths)
-
         return [[self.name] + path for path in paths]
-
-    def _update_paths(self, paths):
-        return paths
 
 
 class Start(Node):
@@ -51,19 +46,6 @@ class End(Node):
 
 class LargeCave(Node):
     type = 'large'
-
-    def _update_paths(self, paths):
-        not_ret_paths = [path for path in paths if path[-1] != self.name]
-
-        # update returning paths
-        ret_paths = [path for path in paths if path[-1] == self.name]
-
-        new_end_paths = []
-        for path in ret_paths:
-            for cmp_path in not_ret_paths:
-                new_end_paths.append(path + cmp_path)
-
-        return not_ret_paths + new_end_paths
 
 
 class SmallCave(Node):
