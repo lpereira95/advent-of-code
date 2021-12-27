@@ -78,7 +78,7 @@ def insert_new_path(grid, paths, new_path):
         else:
             paths.remove(path)
     else:
-        paths.append(new_path)
+        paths.add(new_path)
 
     return paths
 
@@ -87,7 +87,7 @@ def find_shortest_path(grid, min_score_estimation=1e6, all_neighs=True):
     get_neighbors_fnc = get_neighbors if all_neighs else get_neighbors_simplified
     max_i, max_j = get_grid_dims(grid)
 
-    paths = [[(0, 0)]]
+    paths = set((((0, 0),),))
 
     keep_going = True
     min_score = min_score_estimation
@@ -118,7 +118,7 @@ def find_shortest_path(grid, min_score_estimation=1e6, all_neighs=True):
                 if neigh in path:
                     continue
 
-                new_path = path.copy() + [neigh]
+                new_path = path + (neigh,)
 
                 paths = insert_new_path(grid, paths, new_path)
 
@@ -131,7 +131,7 @@ def find_shortest_path(grid, min_score_estimation=1e6, all_neighs=True):
     if len(paths) != 1:
         raise Exception(f'Something went wrong... {len(paths)} paths')
 
-    return paths[0]
+    return paths.pop()
 
 
 def estimate_min_score(grid):
@@ -141,7 +141,7 @@ def estimate_min_score(grid):
 
 if __name__ == '__main__':
 
-    filename = 'input_example.dat'
+    filename = 'input.dat'
     grid = load_grid(filename)
 
     min_score_est = estimate_min_score(grid)
