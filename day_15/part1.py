@@ -1,34 +1,10 @@
 
-import copy
 
 from _utils import load_grid
+from _utils import get_grid_dims
+from _utils import print_path
 
-
-def print_grid(grid):
-    print(_get_grid_str(grid))
-
-
-def get_grid_dims(grid):
-    return len(grid), len(grid[0])
-
-
-def _get_grid_vis(grid, path):
-    grid_vis = copy.deepcopy(grid)
-    for (i, j) in path:
-        grid_vis[i][j] = '.'
-
-    return grid_vis
-
-
-def _get_grid_str(grid):
-    rows = [''.join([str(val) for val in row]) for row in grid]
-    return '\n'.join(rows)
-
-
-def print_path(grid, path):
-    grid_vis = _get_grid_vis(grid, path)
-
-    print_grid(grid_vis)
+# recursive solution, not efficient
 
 
 def _get_neighbors(grid, i, j, positions):
@@ -141,7 +117,7 @@ def estimate_min_score(grid):
 
 if __name__ == '__main__':
 
-    filename = 'input.dat'
+    filename = 'input_example.dat'
     grid = load_grid(filename)
 
     min_score_est = estimate_min_score(grid)
