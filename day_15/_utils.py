@@ -48,10 +48,16 @@ def get_neighbors(i, j, dims):
     return neighbors
 
 
+def _initialize_dp_matrix(grid):
+
+    return [[grid_val + (i + j) * 5 for j, grid_val in enumerate(row)]
+            for i, row in enumerate(grid)]
+
+
 def get_dp_matrix(grid):
 
     dims = get_grid_dims(grid)
-    dp_matrix = copy.deepcopy(grid)
+    dp_matrix = _initialize_dp_matrix(grid)
 
     keep_going = True
     while keep_going:
@@ -70,6 +76,8 @@ def get_dp_matrix(grid):
                     keep_going = True
                     c += 1
 
-        # print(c)
+        print(c, dp_matrix[-1][-1])
+        if previous == dp_matrix[i][j]:  # check last
+            break
 
     return dp_matrix
