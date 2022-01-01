@@ -33,12 +33,8 @@ def get_type(packet, pointer=0):
     return int(packet[pointer:pointer + 3], 2)
 
 
-def _get_subpacket_lims_4(packet, pointer, max_pointer, visited):
+def _get_subpacket_lims_4(packet, pointer, max_pointer):
     start = pointer
-    if start in visited:
-        return []
-    visited.append(start)
-
     pointer += 6
 
     while True:
@@ -52,11 +48,8 @@ def _get_subpacket_lims_4(packet, pointer, max_pointer, visited):
     return [(start, pointer + 5)]
 
 
-def _get_subpacket_lims_other(packet, pointer, max_pointer, visited):
+def _get_subpacket_lims_other(packet, pointer, max_pointer):
     start = pointer
-    if start in visited:
-        return []
-    visited.append(start)
 
     pointer += 6
 
@@ -71,7 +64,7 @@ def _get_subpacket_lims_other(packet, pointer, max_pointer, visited):
         child_pointer = pointer
         children_lims = []
         while True:
-            child_lims = get_lims(packet, child_pointer, pointer + size, visited)
+            child_lims = get_lims(packet, child_pointer, pointer + size)
             if child_lims:
                 child_pointer = child_lims[-1][1]
                 children_lims += child_lims
@@ -85,7 +78,7 @@ def _get_subpacket_lims_other(packet, pointer, max_pointer, visited):
         child_pointer = pointer
         children_lims = []
         for i in range(size):
-            child_lims = get_lims(packet, child_pointer, max_pointer, visited)
+            child_lims = get_lims(packet, child_pointer, max_pointer)
 
             child_pointer = child_lims[0][1]
             children_lims += child_lims
@@ -98,45 +91,38 @@ def _get_subpacket_lims_other(packet, pointer, max_pointer, visited):
     return lims
 
 
-def get_lims(packet, pointer, max_pointer, visited=[]):
+def get_lims(packet, pointer, max_pointer):
     if pointer > max_pointer - 10:
         return []
     type_ = get_type(packet, pointer)
 
     if type_ == 4:
-        return _get_subpacket_lims_4(packet, pointer, max_pointer, visited)
+        return _get_subpacket_lims_4(packet, pointer, max_pointer)
     else:
-        return _get_subpacket_lims_other(packet, pointer, max_pointer, visited)
-
-
-def _get_parent_end(lims, pointer):
-    for lims_ in reversed(lims):
-        if lims_[0] < pointer < lims_[1]:
-            return lims_[1]
-
-    return None
+        return _get_subpacket_lims_other(packet, pointer, max_pointer)
 
 
 if __name__ == '__main__':
 
-    filename = 'input_example_6.dat'
+    from input import MAIN as HEXA_STR
 
+    verbose = False
 
-    with open(filename, 'r') as file:
-        hexa_str = file.read().strip()
-
-    packet = get_packet(hexa_str)
+    packet = get_packet(HEXA_STR)
 
     n = len(packet)
-    print(f'Packet size: {n}')
-    lims = get_lims(packet, 0, len(packet))
-
-    print(lims)
+    lims = get_lims(packet, 0, n)
 
     versions = [get_version(packet, lim[0]) for lim in lims]
-    types = [get_type(packet, lim[0]) for lim in lims]
-    print(versions)
-    print(types)
+
+    if verbose:
+        print(f'Packet size: {n}')
+        print(lims)
+
+        print(versions)
+
+        types = [get_type(packet, lim[0]) for lim in lims]
+        print(types)
 
     print()
     sum_ = sum(versions)
