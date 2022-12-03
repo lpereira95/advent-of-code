@@ -1,7 +1,5 @@
 
 from _utils import (
-    load_data,
-    get_total_score,
     HandShape,
     HAND_SHAPES,
     OPPONENT_CODE,
@@ -29,14 +27,19 @@ def get_round_score(round_):
     return my_score
 
 
-filename = "input.dat"
+if __name__ == '__main__':
+    from _utils import (
+        load_data,
+        get_total_score,
+    )
 
-rounds = load_data(filename)
-answer = get_total_score(rounds, get_round_score)
+    filename = "input.dat"
 
+    rounds = load_data(filename)
+    answer = get_total_score(rounds, get_round_score)
 
-question = (
-    "What would your total score be if everything goes exactly according "
-    "to your strategy guide?"
-)
-print(f"{question} {answer}")
+    question = (
+        "What would your total score be if everything goes exactly according "
+        "to your strategy guide?"
+    )
+    print(f"{question} {answer}")

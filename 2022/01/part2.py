@@ -1,12 +1,14 @@
-from _utils import load_data
+if __name__ == '__main__':
 
-filename = 'input.dat'
-data = load_data(filename)
+    from _utils import load_data
 
-sorted_cal = sorted([sum(calories) for calories in data])
+    filename = 'input.dat'
+    data = load_data(filename)
 
-print(sorted_cal[-3:])
-answer = sum(sorted_cal[-3:])
+    sorted_cal = sorted([sum(calories) for calories in data])
 
-question = "How many Calories are those Elves carrying in total?"
-print(f"{question} {answer}")
+    print(sorted_cal[-3:])
+    answer = sum(sorted_cal[-3:])
+
+    question = "How many Calories are those Elves carrying in total?"
+    print(f"{question} {answer}")
