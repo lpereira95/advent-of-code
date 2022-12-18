@@ -1,9 +1,9 @@
 
 import networkx as nx
 
-from _utils import (
+from _utils import get_grid_shape
+from _utils_nx import (
     get_node_id,
-    get_grid_shape,
     to_graph,
 )
 

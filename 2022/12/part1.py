@@ -1,4 +1,4 @@
-from _utils import get_valid_neighbors
+from _utils import get_valid_neighbors, get_grid_shape
 
 
 def navigate(grid, initial_pos, end_pos):
@@ -44,6 +44,35 @@ def navigate(grid, initial_pos, end_pos):
     return sorted_possible_paths[0]
 
 
+def _get_init_costs(grid):
+    grid_shape = get_grid_shape(grid)
+    costs = {}
+    for i in range(grid_shape[0]):
+        for j in range(grid_shape[1]):
+            costs[(i, j)] = None
+
+    return costs
+
+
+def navigate2(grid, initial_pos, end_pos):
+    costs = _get_init_costs(grid)
+    costs[initial_pos] = 0
+
+    new_positions = [initial_pos]
+    while costs[end_pos] is None:
+
+        next_positions = []
+        for pos in new_positions:
+            neighbors = get_valid_neighbors(grid, pos)
+            for neigh in neighbors:
+                if costs[neigh] is None:
+                    next_positions.append(neigh)
+                    costs[neigh] = costs[pos] + 1
+
+        new_positions = next_positions
+    return costs[end_pos]
+
+
 if __name__ == "__main__":
     from _utils import (
         load_data,
@@ -52,8 +81,8 @@ if __name__ == "__main__":
         get_grid_with_no_special_pos,
     )
 
-    naive = False
-    plot = False
+    impl = 1  # 0 : naive; 1 : less naive
+    plot = False  # only with networkx
 
     filename = "input.dat"
     grid = load_data(filename)
@@ -63,27 +92,13 @@ if __name__ == "__main__":
 
     new_grid = get_grid_with_no_special_pos(grid, init_pos, end_pos)
 
-    if naive:
+    if impl == 0:
         path = navigate(new_grid, init_pos, end_pos)
+        answer = len(path - 1)
 
-    else:
-        import networkx as nx
-        from _utils import to_graph, get_node_id, get_grid_shape
+    if impl == 1:
+        answer = navigate2(new_grid, init_pos, end_pos)
 
-        graph = to_graph(new_grid)
-
-        if plot:
-            import matplotlib.pyplot as plt
-
-            nx.draw(graph)
-            plt.show()
-
-        grid_shape = get_grid_shape(grid)
-        source = get_node_id(*init_pos, grid_shape)
-        target = get_node_id(*end_pos, grid_shape)
-        path = nx.shortest_path(graph, source=source, target=target)
-
-    answer = len(path) - 1
     question = "What is the fewest steps required to move from your current position to the location that should get the best signal?"
 
     print(f"{question} {answer}")

@@ -1,7 +1,4 @@
 import string
-import math
-
-import networkx as nx
 
 
 def get_grid_shape(grid):
@@ -33,7 +30,7 @@ def get_end_position(grid):
     return _get_position(grid, 'E', 'end position')
 
 
-def cmp_values(value, cmp_value):
+def _cmp_values(value, cmp_value):
     index_value = string.ascii_lowercase.index(value)
     index_cmp_value = string.ascii_lowercase.index(cmp_value)
 
@@ -69,36 +66,7 @@ def get_valid_neighbors(grid, position, visited=()):
             continue
 
         cmp_val = grid[l][m]
-        if cmp_values(val, cmp_val):
+        if _cmp_values(val, cmp_val):
             neighbors.append((l, m))
 
     return neighbors
-
-
-def get_node_id(i, j, grid_shape):
-    return i * grid_shape[1] + j
-
-
-def get_position_from_node_id(node_id, grid_shape):
-    return node_id // grid_shape[1], node_id % grid_shape[1]
-
-
-def to_graph(grid):
-    grid_shape = get_grid_shape(grid)
-
-    G = nx.DiGraph()
-    G.add_nodes_from(range(math.prod(grid_shape)))
-
-    edges = []
-    for i in range(grid_shape[0]):
-        for j in range(grid_shape[1]):
-            node_id = get_node_id(i, j, grid_shape)
-            neighbors = get_valid_neighbors(grid, (i, j))
-
-            for neighbor in neighbors:
-                neighbor_id = get_node_id(*neighbor, grid_shape)
-                edges.append([node_id, neighbor_id])
-
-    G.add_edges_from(edges)
-
-    return G
